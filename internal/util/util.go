@@ -1,10 +1,16 @@
 package util
 
 import (
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/gogf/gf/v2/os/gfile"
+	"github.com/gogf/gf/v2/os/gproc"
+	"github.com/gogf/gf/v2/os/gview"
 	"github.com/gogf/gf/v2/text/gregex"
 	"github.com/gogf/gf/v2/text/gstr"
 )
+
+var ctx = gctx.GetInitCtx()
 
 func GetImportPath(filePath string) string {
 
@@ -49,4 +55,16 @@ func AddPrefixIfNotExist(p string, prefix string) string {
 		return p
 	}
 	return prefix + p
+}
+func Format(path string) error {
+	return Run("go fmt " + path)
+}
+func Run(cmd string) error {
+	return gproc.ShellRun(ctx, cmd)
+}
+func Success() {
+	g.Log().Info(ctx, "生成成功")
+}
+func ParseContent(content string, params gview.Params) (string, error) {
+	return gview.ParseContent(ctx, content, params)
 }

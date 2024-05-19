@@ -1,14 +1,15 @@
 package consts
 
-const ControllerTag = "`path:\"{PATH}\" method:\"{METHOD}\"` "
+const ControllerTag = "`path:\"{{ .path }}\" method:\"{{ .method }}\" json:\"-\"`"
 const ApiTemplate = `
-package {PackageName}
+package {{ .packageName }}
 
 import "github.com/gogf/gf/v2/frame/g"
 
-type {Name}Req struct {
-	g.Meta {TAG}
+type {{ .name | CaseCamel }}Req struct {
+	g.Meta {{ .tag }}
 }
-type {Name}Res struct {
+type {{ .name | CaseCamel }}Res struct {
+	g.Meta {{ .ignoreJSON }}
 }
 `
