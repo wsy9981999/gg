@@ -4,8 +4,10 @@ const LogicTemplate = `
 package {{ .name | CaseCamelLower }}
 
 import (
+{{ if .cfg }}
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gctx"
+{{ end }}
 	"{{ .servicePath }}"
 )
 
