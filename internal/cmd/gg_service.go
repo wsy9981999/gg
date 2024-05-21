@@ -31,7 +31,7 @@ func (receiver *cService) Index(ctx context.Context, in cServiceInput) (out *cSe
 	}
 	content, err := g.View().ParseContent(ctx, consts.LogicTemplate, g.MapStrAny{
 		"name":        in.Name,
-		"servicePath": util.GetImportPath(in.SrcFolder),
+		"servicePath": util.GetImportPath(in.DstFolder),
 		"constructor": in.Constructor,
 		"cfg":         in.Config,
 	})
