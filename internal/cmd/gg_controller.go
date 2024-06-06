@@ -6,7 +6,6 @@ import (
 	"gf-generate/internal/consts"
 	"gf-generate/internal/util"
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/text/gstr"
 	"path/filepath"
@@ -22,6 +21,7 @@ type cControllerInput struct {
 	g.Meta    `name:"controller" config:"gfcli.gen.ctrl"`
 	Module    string `name:"module" arg:"true" v:"required"`
 	Name      string `name:"name" arg:"true" v:"required"`
+	Force     bool   `name:"force" short:"f" orphan:"true" d:"false"`
 	Path      string `name:"path" short:"p" d:"/" `
 	Version   string `name:"version" short:"v" d:"v1"`
 	Method    string `name:"method" short:"m" d:"get"`
@@ -67,7 +67,13 @@ func (receiver cController) Controller(ctx context.Context, in cControllerInput)
 	return nil, nil
 }
 func genController(ctx context.Context, apiPath string, in cControllerInput, v string) error {
-	g.Log().Infof(gctx.GetInitCtx(), "正在生成%s", in.Name)
+	g.Log().Infof(ctx, "正在生成%s", in.Name)
+	fullName := apiPath + "/" + fmt.Sprintf("%s.go", util.CaseSnakeFirstUpper(in.Name))
+	if gfile.Exists(fullName) || !in.Force {
+		g.Log().Infof(ctx, "生成%s时，文件以存在，跳过", in.Name)
+		return nil
+	}
+
 	content, err := g.View().ParseContent(ctx, consts.ControllerTag, g.MapStrAny{
 		"path":   util.AddPrefixIfNotExist(in.Path, "/"+gstr.ToLower(in.Module)+"/"),
 		"method": in.Method,
@@ -87,7 +93,7 @@ func genController(ctx context.Context, apiPath string, in cControllerInput, v s
 
 	}
 
-	if err = gfile.PutContents(apiPath+"/"+fmt.Sprintf("%s.go", util.CaseSnakeFirstUpper(in.Name)), c); err != nil {
+	if err = gfile.PutContents(fullName, c); err != nil {
 		return err
 
 	}

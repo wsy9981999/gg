@@ -55,7 +55,6 @@ func (receiver cTs) Index(ctx context.Context, in cTsInput) (*cTsOutput, error) 
 				return nil, err
 			}
 			err = tygo.New(&tygo.Config{
-
 				Packages: []*tygo.PackageConfig{
 					{
 						Path:         gfile.Join(path, rel),

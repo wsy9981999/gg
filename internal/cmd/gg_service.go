@@ -18,6 +18,7 @@ type cServiceInput struct {
 	g.Meta      `name:"service" config:"gfcli.gen.service"`
 	Name        string `name:"name" arg:"true" v:"required"`
 	Constructor bool   `name:"constructor" short:"i" orphan:"true" d:"false"`
+	Force       bool   `name:"force" short:"f" orphan:"true" d:"false"`
 	Config      bool   `name:"cfg" short:"c" orphan:"true" d:"false"`
 	SrcFolder   string `name:"srcFolder" short:"s" d:"internal/logic"`
 	DstFolder   string `name:"dstFolder" short:"d" d:"internal/service"`
@@ -29,6 +30,12 @@ func (receiver *cService) Index(ctx context.Context, in cServiceInput) (out *cSe
 	if in.Config {
 		in.Constructor = true
 	}
+	fileName := filepath.Join(in.SrcFolder, util.CaseCamelLower(in.Name), util.CaseCamelLower(in.Name)+".go")
+	if gfile.Exists(fileName) && !in.Force {
+		g.Log().Info(ctx, "文件已存在，跳过")
+		return
+	}
+
 	content, err := g.View().ParseContent(ctx, consts.LogicTemplate, g.MapStrAny{
 		"name":        in.Name,
 		"servicePath": util.GetImportPath(in.DstFolder),
@@ -38,7 +45,6 @@ func (receiver *cService) Index(ctx context.Context, in cServiceInput) (out *cSe
 	if err != nil {
 		return nil, err
 	}
-	fileName := filepath.Join(in.SrcFolder, util.CaseCamelLower(in.Name), util.CaseCamelLower(in.Name)+".go")
 	if err = gfile.PutContents(fileName, content); err != nil {
 		return nil, err
 	}
