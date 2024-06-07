@@ -1,8 +1,11 @@
 package main
 
 import (
+	_ "gf-generate/internal/logic"
+
 	"gf-generate/internal/cmd"
 	"gf-generate/internal/util"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gcfg"
 	"github.com/gogf/gf/v2/os/gcmd"
